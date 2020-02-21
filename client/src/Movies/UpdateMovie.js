@@ -1,8 +1,40 @@
-import React from 'react';
+import React, { useState } from 'react';
 import axios from 'axios';
+
+const initialMovie = {
+    id: "",
+    title: "",
+    director: "",
+    metascore: "",
+    stars: []
+};
 
 
 const UpdateMovie = () => {
+    const [movie, setMovie] = useState(initialMovie);
+
+    useEffect(() => {
+        const selectedMovie = props.items.find(movie => {
+          return `${movie.id}` === props.match.params.id;
+        });
+        console.log(selectedMovie);
+        if (selectedMovie) {
+          setItem(selectedMovie);
+        }
+    }, [props.items, props.match.params.id]);
+
+    const changeHandler = ev => {
+        ev.persist();
+        let value = ev.target.value;
+        if (ev.target.name === "price") {
+          value = parseInt(value, 10);
+        }
+    
+        setMovie({
+          ...movie,
+          [ev.target.name]: value
+        });
+    };
 
 
 
