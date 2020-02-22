@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 
 const initialMovie = {
@@ -10,40 +10,27 @@ const initialMovie = {
 };
 
 
-const UpdateMovie = () => {
+const UpdateMovie = (props) => {
     const [movie, setMovie] = useState(initialMovie);
 
     useEffect(() => {
-        const selectedMovie = props.items.find(movie => {
-          return `${movie.id}` === props.match.params.id;
-        });
-        console.log(selectedMovie);
-        if (selectedMovie) {
-          setItem(selectedMovie);
-        }
-    }, [props.items, props.match.params.id]);
+      axios
+          .get(`http://localhost:5000/api/movies/${props.match.params.id}`)
+          .then( response => {
+              setMovie(response.data);
+          })
+    }, [props.match.params.id])
 
-    const changeHandler = ev => {
-        ev.persist();
-        let value = ev.target.value;
-        if (ev.target.name === "price") {
-          value = parseInt(value, 10);
-        }
-    
-        setMovie({
-          ...movie,
-          [ev.target.name]: value
-        });
-    };
-
-
+    const changeHandler = e => {
+      setMovie({ ...movie, [e.target.name]: e.target.value});
+    }
 
     const handleSubmit = e => {
         e.preventDefault();
         axios
           .put(`http://localhost:5000/api/movies/${movie.id}`, movie)
           .then(res => {
-            props.updateItems(res.data);
+            props.history.push(`/movies/${movie.id}`);
           })
           .catch(err => {
             console.log(err);
